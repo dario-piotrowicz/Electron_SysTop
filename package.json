@@ -1,0 +1,24 @@
+{
+  "name": "systop",
+  "version": "1.0.0",
+  "description": "Monitors your system CPU",
+  "main": "main.js",
+  "scripts": {
+    "start": "nodemon --ext js,html,css --exec electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dario-piotrowicz/Electron_SysTop.git"
+  },
+  "author": "Dario Piotrowicz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dario-piotrowicz/Electron_SysTop/issues"
+  },
+  "homepage": "https://github.com/dario-piotrowicz/Electron_SysTop#readme",
+  "devDependencies": {
+    "electron": "^12.0.5",
+    "electron-packager": "^15.2.0",
+    "nodemon": "^2.0.7"
+  }
+}
