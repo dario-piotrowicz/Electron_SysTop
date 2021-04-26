@@ -74,5 +74,21 @@
         </li>
       </ul>
     </nav>
+
+    <script>
+      const panels = document.querySelectorAll(".panel"),
+        panelNavs = document.querySelectorAll("#panels-nav ul li"),
+        clearPanelsAndNavs = () => {
+          panels.forEach((content) => content.classList.remove("show"));
+          panelNavs.forEach((item) => item.classList.remove("active"));
+        };
+      panels.forEach((_, index) =>
+        panelNavs[index].addEventListener("click", () => {
+          clearPanelsAndNavs();
+          panels[index].classList.add("show");
+          panelNavs[index].classList.add("active");
+        })
+      );
+    </script>
   </body>
 </html>
