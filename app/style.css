@@ -1,5 +1,6 @@
 :root {
   --primary-color: #30c88b;
+  --danger-color: rgb(255, 0, 0);
   --background-color: #000;
   --secondary-background-color: #333;
 }
@@ -115,6 +116,7 @@ nav ul li p {
   background: var(--primary-color);
   height: 100%;
   border-radius: 9px;
+  transition: width 0.5s, background-color 0.5s;
 }
 
 .alert {

@@ -19,13 +19,19 @@ const setInnerText = (element, text) => (element.innerText = text);
 })();
 
 const monitoringInternalInMillis = 1000;
+const cpuOverloadThreshold = 80;
 const cpuUsageEl = document.getElementById("cpu-usage");
+const cpuProgressBarEl = document.getElementById("cpu-progress");
 const cpuFreeEl = document.getElementById("cpu-free");
 const uptimeEl = document.getElementById("system-uptime");
 
 updateDynamicInfo = async () => {
   const cpuUsage = await cpu.usage();
   setInnerText(cpuUsageEl, `${cpuUsage.toFixed(2)}%`);
+  cpuProgressBarEl.style.width = `${cpuUsage}%`;
+  cpuProgressBarEl.style.backgroundColor = `var(--${
+    cpuUsage < cpuOverloadThreshold ? "primary" : "danger"
+  }-color)`;
   const cpuFree = await cpu.free();
   setInnerText(cpuFreeEl, `${cpuFree.toFixed(2)}%`);
   setInnerText(uptimeEl, convertSecondsToReadableFormat(os.uptime()));
