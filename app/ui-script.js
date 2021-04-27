@@ -1,3 +1,4 @@
+const path = require("path");
 const osu = require("node-os-utils");
 
 const os = osu.os;
@@ -50,4 +51,11 @@ const convertSecondsToReadableFormat = (totalSeconds) => {
   );
   const seconds = Math.floor(totalSeconds % secondsInAMinute);
   return `${days}d, ${hours}h, ${minutes}m, ${seconds}s`;
+};
+
+const notifyUserCpuOverload = (cpuUsage, cpuOverloadThreshold) => {
+  new Notification("CPU Overload", {
+    body: `The CPU usage is ${cpuUsage}%, above the threshold of ${cpuOverloadThreshold}%`,
+    icon: `${path.join(__dirname, "..", "assets", "icons", "icon.png")}`,
+  });
 };
