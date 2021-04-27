@@ -1,9 +1,18 @@
 const path = require("path");
 const { app, BrowserWindow, Menu } = require("electron");
 
+const Store = require("./store");
+
 process.env.NODE_ENV = "development";
 
 const isDev = process.env.NODE_ENV !== "production";
+
+const store = new Store({
+  settings: {
+    cpuOverloadThreshold: 80,
+    alertFrequencyInMinutes: 5,
+  },
+});
 
 let mainWindow;
 
