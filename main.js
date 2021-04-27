@@ -42,6 +42,9 @@ app.on("ready", () => {
     mainWindow.maximize();
     mainWindow.webContents.openDevTools();
   }
+  mainWindow.webContents.on("dom-ready", () => {
+    mainWindow.webContents.send("set-settings", store.get("settings"));
+  });
 });
 
 app.on("activate", () => {

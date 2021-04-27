@@ -1,6 +1,8 @@
 const path = require("path");
 const osu = require("node-os-utils");
 
+const { ipcRenderer } = require("electron");
+
 const os = osu.os;
 const cpu = osu.cpu;
 const mem = osu.mem;
@@ -20,7 +22,7 @@ const setInnerText = (element, text) => (element.innerText = text);
 })();
 
 const monitoringInternalInMillis = 1000;
-const cpuOverloadThreshold = 80;
+let cpuOverloadThreshold = 80;
 const cpuUsageEl = document.getElementById("cpu-usage");
 const cpuProgressBarEl = document.getElementById("cpu-progress");
 const cpuFreeEl = document.getElementById("cpu-free");
@@ -56,8 +58,8 @@ const convertSecondsToReadableFormat = (totalSeconds) => {
   return `${days}d, ${hours}h, ${minutes}m, ${seconds}s`;
 };
 
-const alertFrequencyInMinutes = 5;
-const alertFrequencyInMillis =
+let alertFrequencyInMinutes = 5;
+let alertFrequencyInMillis =
   alertFrequencyInMinutes * (1000 * secondsInAMinute);
 let lastNotificationTimeInMillis =
   +localStorage.getItem("lastNotificationTimeInMillis") || -1;
@@ -75,3 +77,28 @@ const notifyUserCpuOverload = (cpuUsage, cpuOverloadThreshold) => {
     );
   }
 };
+
+ipcRenderer.on("set-settings", (_event, settings) => {
+  if (settings) {
+    if (settings.cpuOverloadThreshold) {
+      const tmpThreshold = +settings.cpuOverloadThreshold;
+      if (tmpThreshold >= 1 && tmpThreshold <= 100) {
+        cpuOverloadThreshold = tmpThreshold;
+      }
+    }
+
+    if (settings.alertFrequencyInMinutes) {
+      const tmpAlertFrequencyInMinutes = +settings.alertFrequencyInMinutes;
+      if (
+        tmpAlertFrequencyInMinutes >= 1 &&
+        tmpAlertFrequencyInMinutes <= 180
+      ) {
+        alertFrequencyInMinutes = tmpAlertFrequencyInMinutes;
+        alertFrequencyInMillis =
+          alertFrequencyInMinutes * (1000 * secondsInAMinute);
+      }
+    }
+  }
+  document.getElementById("alert-frequency").value = alertFrequencyInMinutes;
+  document.getElementById("cpu-overload-percent").value = cpuOverloadThreshold;
+});

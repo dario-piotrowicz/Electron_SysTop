@@ -48,11 +48,11 @@
         <form id="setting-form">
           <div class="form-control">
             <label for="cpu-overload-percent">CPU Overload Warning %</label>
-            <input type="number" id="cpu-overload-percent" />
+            <input type="number" id="cpu-overload-percent" min="1" max="100" />
           </div>
           <div class="form-control">
             <label for="alert-frequency">Alert Frequency (in minutes)</label>
-            <input type="number" id="alert-frequency" />
+            <input type="number" id="alert-frequency" min="1" max="180" />
           </div>
           <input type="submit" value="Save" class="btn" />
         </form>
