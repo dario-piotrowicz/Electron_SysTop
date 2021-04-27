@@ -36,6 +36,9 @@ updateDynamicInfo = async () => {
   const cpuFree = await cpu.free();
   setInnerText(cpuFreeEl, `${cpuFree.toFixed(2)}%`);
   setInnerText(uptimeEl, convertSecondsToReadableFormat(os.uptime()));
+  if (cpuUsage >= cpuOverloadThreshold) {
+    notifyUserCpuOverload(cpuUsage, cpuOverloadThreshold);
+  }
 };
 
 setInterval(updateDynamicInfo, monitoringInternalInMillis);
@@ -53,9 +56,22 @@ const convertSecondsToReadableFormat = (totalSeconds) => {
   return `${days}d, ${hours}h, ${minutes}m, ${seconds}s`;
 };
 
+const alertFrequencyInMinutes = 5;
+const alertFrequencyInMillis =
+  alertFrequencyInMinutes * (1000 * secondsInAMinute);
+let lastNotificationTimeInMillis =
+  +localStorage.getItem("lastNotificationTimeInMillis") || -1;
 const notifyUserCpuOverload = (cpuUsage, cpuOverloadThreshold) => {
-  new Notification("CPU Overload", {
-    body: `The CPU usage is ${cpuUsage}%, above the threshold of ${cpuOverloadThreshold}%`,
-    icon: `${path.join(__dirname, "..", "assets", "icons", "icon.png")}`,
-  });
+  const nowInMillis = new Date().getTime();
+  if (nowInMillis > lastNotificationTimeInMillis + alertFrequencyInMillis) {
+    new Notification("CPU Overload", {
+      body: `The CPU usage is ${cpuUsage}%, above the threshold of ${cpuOverloadThreshold}%`,
+      icon: `${path.join(__dirname, "..", "assets", "icons", "icon.png")}`,
+    });
+    lastNotificationTimeInMillis = nowInMillis;
+    localStorage.setItem(
+      "lastNotificationTimeInMillis",
+      lastNotificationTimeInMillis
+    );
+  }
 };
