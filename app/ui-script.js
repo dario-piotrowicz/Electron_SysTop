@@ -78,6 +78,11 @@ const notifyUserCpuOverload = (cpuUsage, cpuOverloadThreshold) => {
   }
 };
 
+const cpuOverloadThresholdInputEl = document.getElementById(
+  "cpu-overload-percent"
+);
+const alterFrequencyInputEl = document.getElementById("alert-frequency");
+
 ipcRenderer.on("set-settings", (_event, settings) => {
   if (settings) {
     if (settings.cpuOverloadThreshold) {
@@ -99,6 +104,17 @@ ipcRenderer.on("set-settings", (_event, settings) => {
       }
     }
   }
-  document.getElementById("alert-frequency").value = alertFrequencyInMinutes;
-  document.getElementById("cpu-overload-percent").value = cpuOverloadThreshold;
+  cpuOverloadThresholdInputEl.value = cpuOverloadThreshold;
+  alterFrequencyInputEl.value = alertFrequencyInMinutes;
+});
+
+const settingsForm = document.getElementById("setting-form");
+settingsForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const cpuOverloadThresholdInputValue = cpuOverloadThresholdInputEl.value;
+  const alertFrequencyInMinutesInputValue = alterFrequencyInputEl.value;
+  ipcRenderer.send("update-settings", {
+    cpuOverloadThreshold: cpuOverloadThresholdInputValue,
+    alertFrequencyInMinutes: alertFrequencyInMinutesInputValue,
+  });
 });

@@ -24,7 +24,7 @@ class Store {
 
 function parseDataFile(path, defaults) {
   try {
-    return JSON.stringify(fs.readFileSync(path));
+    return JSON.parse(fs.readFileSync(path));
   } catch {
     return defaults;
   }

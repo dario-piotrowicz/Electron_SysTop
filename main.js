@@ -1,5 +1,5 @@
 const path = require("path");
-const { app, BrowserWindow, Menu } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 
 const Store = require("./store");
 
@@ -32,6 +32,9 @@ const createMainWindow = () => {
   mainWindow.loadFile(`${__dirname}/app/index.html`);
 };
 
+const sendSetSettingToUI = () =>
+  mainWindow.webContents.send("set-settings", store.get("settings"));
+
 app.on("ready", () => {
   createMainWindow();
   mainWindow.on("close", () => (mainWindow = null));
@@ -42,9 +45,7 @@ app.on("ready", () => {
     mainWindow.maximize();
     mainWindow.webContents.openDevTools();
   }
-  mainWindow.webContents.on("dom-ready", () => {
-    mainWindow.webContents.send("set-settings", store.get("settings"));
-  });
+  mainWindow.webContents.on("dom-ready", sendSetSettingToUI);
 });
 
 app.on("activate", () => {
@@ -80,3 +81,14 @@ const getMainTemplateMenu = () => {
     ...devMenu,
   ];
 };
+
+ipcMain.on(
+  "update-settings",
+  (_event, { cpuOverloadThreshold, alertFrequencyInMinutes }) => {
+    store.set("settings", {
+      cpuOverloadThreshold,
+      alertFrequencyInMinutes,
+    });
+    sendSetSettingToUI();
+  }
+);
