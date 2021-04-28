@@ -109,6 +109,29 @@ ipcRenderer.on("set-settings", (_event, settings) => {
 });
 
 const settingsForm = document.getElementById("setting-form");
+const settingsUpdatedMessage = document.getElementById(
+  "settings-updated-message"
+);
+
+let settingsUpdatedMessageHideTimeout = null;
+
+const showSettingsUpdatesMessage = () => {
+  settingsUpdatedMessage.classList.add("show");
+
+  if (settingsUpdatedMessageHideTimeout !== null) {
+    clearTimeout(settingsUpdatedMessageHideTimeout);
+  }
+
+  settingsUpdatedMessageHideTimeout = setTimeout(() => {
+    settingsUpdatedMessage.classList.add("closing");
+    settingsUpdatedMessageHideTimeout = setTimeout(() => {
+      settingsUpdatedMessageHideTimeout = null;
+      settingsUpdatedMessage.classList.remove("closing");
+      settingsUpdatedMessage.classList.remove("show");
+    }, 500);
+  }, 1000);
+};
+
 settingsForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const cpuOverloadThresholdInputValue = cpuOverloadThresholdInputEl.value;
@@ -117,4 +140,5 @@ settingsForm.addEventListener("submit", (event) => {
     cpuOverloadThreshold: cpuOverloadThresholdInputValue,
     alertFrequencyInMinutes: alertFrequencyInMinutesInputValue,
   });
+  showSettingsUpdatesMessage();
 });

@@ -119,11 +119,23 @@ nav ul li p {
   transition: width 0.5s, background-color 0.5s;
 }
 
-.alert {
+#settings-updated-message {
+  margin-top: 30px;
   text-align: center;
   padding: 5px;
   color: orange;
   border: orange 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s;
+}
+#settings-updated-message.show {
+  visibility: visible;
+  opacity: 1;
+}
+#settings-updated-message.closing {
+  opacity: 0;
 }
 
 .form-control {
