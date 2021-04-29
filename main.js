@@ -52,6 +52,15 @@ app.on("ready", () => {
   const trayIcon = path.join(__dirname, "assets", "icons", "tray_icon.png");
   tray = new Tray(trayIcon);
   setTrayContextMenu();
+  const mainWindowBackup = mainWindow;
+  mainWindow.on("close", (event) => {
+    if (!app.quittingFromTray) {
+      mainWindow = mainWindowBackup;
+      mainWindow.hide();
+      setTrayContextMenu();
+      event.preventDefault();
+    }
+  });
 });
 
 const setTrayContextMenu = () => {
@@ -73,6 +82,14 @@ const setTrayContextMenu = () => {
 
   const trayMenu = Menu.buildFromTemplate([
     { label: hideShowLabel, click: hideShowClickFn },
+    { type: "separator" },
+    {
+      label: "Quit SysTop",
+      click: () => {
+        app.quittingFromTray = true;
+        app.quit();
+      },
+    },
   ]);
   tray.setContextMenu(trayMenu);
 };
@@ -80,12 +97,6 @@ const setTrayContextMenu = () => {
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createMainWindow();
-  }
-});
-
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
   }
 });
 
