@@ -1,6 +1,7 @@
 const path = require("path");
 const { app, BrowserWindow, Menu, ipcMain, Tray } = require("electron");
 
+const MainWindow = require("./mainWindow");
 const Store = require("./store");
 
 process.env.NODE_ENV = "development";
@@ -17,22 +18,7 @@ const store = new Store({
 let mainWindow;
 let tray;
 
-const createMainWindow = () => {
-  mainWindow = new BrowserWindow({
-    title: "SysTop",
-    width: 355,
-    height: 500,
-    show: false,
-    resizable: isDev,
-    icon: `${__dirname}/assets/icons/icon.png`,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-  });
-
-  mainWindow.loadFile(`${__dirname}/app/index.html`);
-};
+const createMainWindow = () => (mainWindow = new MainWindow(isDev));
 
 const sendSetSettingToUI = () =>
   mainWindow.webContents.send("set-settings", store.get("settings"));
