@@ -100,12 +100,7 @@ const getMainTemplateMenu = () => {
           ],
         },
       ];
-  return [
-    {
-      role: "FileMenu",
-    },
-    ...devMenu,
-  ];
+  return [...devMenu];
 };
 
 ipcMain.on(
