@@ -1,5 +1,5 @@
 const path = require("path");
-const { app, BrowserWindow, Menu, ipcMain } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain, Tray } = require("electron");
 
 const Store = require("./store");
 
@@ -15,12 +15,14 @@ const store = new Store({
 });
 
 let mainWindow;
+let tray;
 
 const createMainWindow = () => {
   mainWindow = new BrowserWindow({
     title: "SysTop",
     width: 355,
     height: 500,
+    show: false,
     resizable: isDev,
     icon: `${__dirname}/assets/icons/icon.png`,
     webPreferences: {
@@ -46,7 +48,34 @@ app.on("ready", () => {
     mainWindow.webContents.openDevTools();
   }
   mainWindow.webContents.on("dom-ready", sendSetSettingToUI);
+
+  const trayIcon = path.join(__dirname, "assets", "icons", "tray_icon.png");
+  tray = new Tray(trayIcon);
+  setTrayContextMenu();
 });
+
+const setTrayContextMenu = () => {
+  let hideShowLabel;
+  let hideShowClickFn;
+  if (mainWindow.isVisible()) {
+    hideShowLabel = "Hide SysTop";
+    hideShowClickFn = () => {
+      mainWindow.hide();
+      setTrayContextMenu();
+    };
+  } else {
+    hideShowLabel = "Show SysTop";
+    hideShowClickFn = () => {
+      mainWindow.show();
+      setTrayContextMenu();
+    };
+  }
+
+  const trayMenu = Menu.buildFromTemplate([
+    { label: hideShowLabel, click: hideShowClickFn },
+  ]);
+  tray.setContextMenu(trayMenu);
+};
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
