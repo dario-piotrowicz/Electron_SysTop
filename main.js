@@ -1,7 +1,7 @@
-const path = require("path");
-const { app, BrowserWindow, Menu, ipcMain, Tray } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 
 const MainWindow = require("./mainWindow");
+const AppTray = require("./appTray");
 const Store = require("./store");
 
 process.env.NODE_ENV = "development";
@@ -35,50 +35,18 @@ app.on("ready", () => {
   }
   mainWindow.webContents.on("dom-ready", sendSetSettingToUI);
 
-  const trayIcon = path.join(__dirname, "assets", "icons", "tray_icon.png");
-  tray = new Tray(trayIcon);
-  setTrayContextMenu();
+  tray = new AppTray(mainWindow);
+  tray.setTrayContextMenu();
   const mainWindowBackup = mainWindow;
   mainWindow.on("close", (event) => {
     if (!app.quittingFromTray) {
       mainWindow = mainWindowBackup;
       mainWindow.hide();
-      setTrayContextMenu();
+      tray.setTrayContextMenu();
       event.preventDefault();
     }
   });
 });
-
-const setTrayContextMenu = () => {
-  let hideShowLabel;
-  let hideShowClickFn;
-  if (mainWindow.isVisible()) {
-    hideShowLabel = "Hide SysTop";
-    hideShowClickFn = () => {
-      mainWindow.hide();
-      setTrayContextMenu();
-    };
-  } else {
-    hideShowLabel = "Show SysTop";
-    hideShowClickFn = () => {
-      mainWindow.show();
-      setTrayContextMenu();
-    };
-  }
-
-  const trayMenu = Menu.buildFromTemplate([
-    { label: hideShowLabel, click: hideShowClickFn },
-    { type: "separator" },
-    {
-      label: "Quit SysTop",
-      click: () => {
-        app.quittingFromTray = true;
-        app.quit();
-      },
-    },
-  ]);
-  tray.setContextMenu(trayMenu);
-};
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
