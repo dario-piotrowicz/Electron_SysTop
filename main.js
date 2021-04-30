@@ -4,7 +4,7 @@ const MainWindow = require("./mainWindow");
 const AppTray = require("./appTray");
 const Store = require("./store");
 
-process.env.NODE_ENV = "development";
+process.env.NODE_ENV = "production";
 
 const isDev = process.env.NODE_ENV !== "production";
 
